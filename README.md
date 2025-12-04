@@ -1,36 +1,270 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Система управління закладом охорони здоров'я
 
-## Getting Started
+## Опис проекту
 
-First, run the development server:
+Інформаційна технологія автоматизації процесів управління діяльністю закладу охорони здоров'я на основі моделі рольового управління доступом (RBAC).
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Основні можливості
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Модель RBAC (Role-Based Access Control)
+- 5 рольових груп користувачів
+- Гнучка система дозволів
+- Контроль доступу на рівні ресурсів і дій
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Функціональні модулі
+1. **Управління пацієнтами** - реєстрація, картки пацієнтів, пошук
+2. **Записи на прийом** - планування, підтвердження, відслідковування
+3. **Медичні записи** - електронні карти, діагнози, рецепти
+4. **Користувачі** - управління персоналом, призначення ролей
+5. **Відділення** - структура лікарні, розподіл ресурсів
+6. **Управління доступом** - налаштування ролей і дозволів
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Технічний стек
 
-## Learn More
+### Backend
+- **Python 3.10+**
+- **FastAPI** - сучасний веб-фреймворк для API
+- **SQLAlchemy** - ORM для роботи з базою даних
+- **SQLite** - легка реляційна база даних
+- **JWT** - аутентифікація через токени
+- **Pydantic** - валідація даних
 
-To learn more about Next.js, take a look at the following resources:
+### Frontend
+- **HTML5 + CSS3**
+- **Bootstrap 5** - адаптивний UI
+- **Vanilla JavaScript** - без залежностей
+- **Bootstrap Icons** - іконки
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Структура проекту
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+\`\`\`
+.
+├── app/
+│   ├── main.py              # Головний файл додатку
+│   ├── database.py          # Налаштування БД
+│   ├── models.py            # Моделі SQLAlchemy
+│   ├── schemas.py           # Pydantic схеми
+│   ├── auth.py              # Аутентифікація JWT
+│   ├── rbac.py              # Ініціалізація RBAC
+│   └── routers/             # API endpoints
+│       ├── auth.py          # Авторизація
+│       ├── users.py         # Користувачі
+│       ├── patients.py      # Пацієнти
+│       ├── appointments.py  # Записи
+│       ├── medical_records.py # Медичні записи
+│       ├── departments.py   # Відділення
+│       └── rbac.py          # Управління доступом
+├── static/
+│   ├── index.html           # Головна сторінка
+│   └── app.js               # Frontend логіка
+├── requirements.txt         # Python залежності
+└── README.md               # Документація
+\`\`\`
 
-## Deploy on Vercel
+## Встановлення та запуск
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 1. Встановлення залежностей
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+\`\`\`bash
+pip install -r requirements.txt
+\`\`\`
+
+### 2. Запуск сервера
+
+\`\`\`bash
+python -m app.main
+\`\`\`
+
+або
+
+\`\`\`bash
+uvicorn app.main:app --reload
+\`\`\`
+
+### 3. Доступ до системи
+
+- **Веб-інтерфейс**: http://localhost:8000
+- **API документація**: http://localhost:8000/docs
+- **Альтернативна документація**: http://localhost:8000/redoc
+
+## Тестові облікові записи
+
+| Логін | Пароль | Роль |
+|-------|--------|------|
+| admin | admin123 | Адміністратор |
+| doctor | doctor123 | Лікар |
+| nurse | nurse123 | Медсестра |
+| registrar | registrar123 | Реєстратор |
+
+## Ролі та дозволи
+
+### Адміністратор
+- Повний доступ до всіх модулів
+- Управління користувачами та ролями
+- Налаштування системи
+
+### Лікар
+- Перегляд та оновлення даних пацієнтів
+- Перегляд та оновлення записів на прийом
+- Створення, перегляд та оновлення медичних записів
+- Перегляд відділень
+
+### Медсестра
+- Перегляд та оновлення даних пацієнтів
+- Перегляд та оновлення записів на прийом
+- Перегляд медичних записів
+- Перегляд відділень
+
+### Реєстратор
+- Створення, перегляд та оновлення пацієнтів
+- Повне управління записами на прийом
+- Перегляд відділень
+
+### Завідувач відділення
+- Всі дозволи лікаря
+- Оновлення інформації про відділення
+- Перегляд користувачів
+
+## API Endpoints
+
+### Аутентифікація
+- `POST /api/auth/login` - Вхід в систему
+- `GET /api/auth/me` - Інформація про користувача
+- `POST /api/auth/logout` - Вихід
+
+### Користувачі
+- `GET /api/users` - Список користувачів
+- `POST /api/users` - Створення користувача
+- `GET /api/users/{id}` - Деталі користувача
+- `PUT /api/users/{id}` - Оновлення користувача
+- `DELETE /api/users/{id}` - Видалення користувача
+- `POST /api/users/{user_id}/roles/{role_id}` - Призначити роль
+- `DELETE /api/users/{user_id}/roles/{role_id}` - Видалити роль
+
+### Пацієнти
+- `GET /api/patients` - Список пацієнтів (з пошуком)
+- `POST /api/patients` - Додати пацієнта
+- `GET /api/patients/{id}` - Деталі пацієнта
+- `PUT /api/patients/{id}` - Оновити пацієнта
+- `DELETE /api/patients/{id}` - Видалити пацієнта
+
+### Записи на прийом
+- `GET /api/appointments` - Список записів (з фільтрами)
+- `POST /api/appointments` - Створити запис
+- `GET /api/appointments/{id}` - Деталі запису
+- `PUT /api/appointments/{id}` - Оновити запис
+- `DELETE /api/appointments/{id}` - Скасувати запис
+
+### Медичні записи
+- `GET /api/medical-records` - Список записів
+- `POST /api/medical-records` - Створити запис
+- `GET /api/medical-records/{id}` - Деталі запису
+- `PUT /api/medical-records/{id}` - Оновити запис
+- `DELETE /api/medical-records/{id}` - Видалити запис
+
+### Відділення
+- `GET /api/departments` - Список відділень
+- `POST /api/departments` - Створити відділення
+- `GET /api/departments/{id}` - Деталі відділення
+
+### RBAC
+- `GET /api/rbac/roles` - Список ролей
+- `GET /api/rbac/permissions` - Список дозволів
+- `GET /api/rbac/my-permissions` - Мої дозволи
+- `POST /api/rbac/roles/{role_id}/permissions/{permission_id}` - Додати дозвіл до ролі
+- `DELETE /api/rbac/roles/{role_id}/permissions/{permission_id}` - Видалити дозвіл з ролі
+
+## Безпека
+
+### Аутентифікація
+- JWT токени з 8-годинним терміном дії
+- Bcrypt хешування паролів
+- Bearer token аутентифікація
+
+### Авторизація
+- Перевірка дозволів на рівні API endpoints
+- Ієрархія ролей з пріоритетами
+- Контроль доступу до конфіденційних даних
+
+### Захист даних
+- Валідація даних через Pydantic
+- Параметризовані SQL запити (SQLAlchemy ORM)
+- М'яке видалення критичних даних
+
+## База даних
+
+### Основні таблиці
+- **users** - Користувачі системи
+- **roles** - Ролі
+- **permissions** - Дозволи
+- **user_roles** - Зв'язок користувачів і ролей (M:N)
+- **role_permissions** - Зв'язок ролей і дозволів (M:N)
+- **patients** - Пацієнти
+- **departments** - Відділення
+- **appointments** - Записи на прийом
+- **medical_records** - Медичні записи
+
+### Схема БД
+
+\`\`\`
+users ←→ user_roles ←→ roles ←→ role_permissions ←→ permissions
+  ↓                                    ↓
+medical_records                   appointments
+  ↓                                    ↓
+patients ←────────────────────────────┘
+  ↓
+departments
+\`\`\`
+
+## Для кваліфікаційної роботи
+
+### Розділ 1 - Теоретична частина
+- Опис моделі RBAC
+- Порівняння з іншими моделями доступу (DAC, MAC)
+- Аналіз застосування в медичній сфері
+
+### Розділ 2 - Аналітична частина
+- Аналіз бізнес-процесів ЗОЗ
+- Моделювання процесів (BPMN діаграми)
+- Обґрунтування вибору технологій
+
+### Розділ 3 - Практична частина
+- Архітектура системи (діаграми компонентів, класів)
+- Схема бази даних (ER-діаграма)
+- Алгоритми перевірки доступу
+- Скріншоти інтерфейсу
+- Тестування системи
+
+## Можливі покращення
+
+1. **Розширення функціоналу**
+   - Аналітика та звіти
+   - Календар лікарів
+   - Інтеграція з медичним обладнанням
+   - Телемедицина
+
+2. **UI/UX**
+   - React.js або Vue.js для frontend
+   - Прогресивний веб-додаток (PWA)
+   - Темна тема
+   - Мультимовність
+
+3. **Безпека**
+   - Двофакторна аутентифікація
+   - Аудит дій користувачів
+   - Шифрування медичних даних
+   - Rate limiting
+
+4. **Інфраструктура**
+   - PostgreSQL замість SQLite
+   - Docker контейнеризація
+   - CI/CD pipeline
+   - Мікросервісна архітектура
+
+## Ліцензія
+
+Цей проект створено для освітніх цілей.
+
+## Автор
+
+Кваліфікаційна робота з теми "Інформаційна технологія автоматизації процесів управління діяльністю закладу охорони здоров'я на основі моделі рольового управління доступом"
